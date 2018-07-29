@@ -4,6 +4,7 @@
    "description": "Easy and simple login system made in Node.js & MongoDB",
    "main": "app.js",
    "scripts": {
+      "dev": "supervisor app.js",
       "start": "node app.js"
    },
    "keywords": [
