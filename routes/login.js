@@ -1,5 +1,6 @@
 const express = require('express'),
    User = require('../models/user'),
+   jwt = require('jsonwebtoken'),
    app = express();
 
 app.get('/login', (req, res) => {
@@ -7,12 +8,28 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-   User.findOne({username: req.body.username}, (err, userDB) => {
-      if (!userDB || req.body.password !== userDB.password) {
-         return res.json('User or password incorrect')
+   User.findOne({username: req.body.username}, async (err, userDB) => {
+
+      /**
+       * Check encrypted password
+       */
+      const validPassword = userDB ? await userDB.checkPassword(req.body.password) : null;
+
+      if (err || !validPassword) {
+         return res.json({
+            err,
+            message: 'Invalid user or password'
+         })
       }
 
-      res.json(userDB)
+      const token = jwt.sign({
+         userDB
+      }, 'dev-seed', {expiresIn: 60 * 60});
+
+      res.json({
+         userDB,
+         token
+      })
 
    })
 })
