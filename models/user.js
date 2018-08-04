@@ -1,4 +1,5 @@
 const mongoose = require('mongoose'),
+   bcrypt = require('bcrypt'),
    validator = require('mongoose-unique-validator');
 
 const User = mongoose.Schema({
@@ -25,6 +26,23 @@ const User = mongoose.Schema({
    }
 });
 
+/**
+ * Encrypt user password
+ */
+User.methods.hash = function (password) {
+   return bcrypt.hash(password, 10)
+}
+
+/**
+ * Check hashed password
+ */
+User.methods.checkPassword = function (password) {
+   return bcrypt.compare(password, this.password)
+}
+
+/**
+ * Delete password from user Object
+ */
 User.methods.toJSON = function () {
    const obj = this.toObject();
    delete obj.password;
