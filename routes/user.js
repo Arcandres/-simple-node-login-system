@@ -31,13 +31,14 @@ app.get('/user/:username', (req, res) => {
 });
 
 // Create New User
-app.post('/user', (req, res) => {
+app.post('/user', async (req, res) => {
    const user = new User({
       name: req.body.name,
       username: req.body.username,
       email: req.body.email,
-      password: req.body.password
    });
+
+   user.password = await user.hash(req.body.password)
 
    user.save((err, userDB) => {
       if (err) {
