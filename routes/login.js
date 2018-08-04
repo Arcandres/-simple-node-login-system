@@ -23,12 +23,16 @@ app.post('/login', (req, res) => {
       }
 
       const token = jwt.sign({
-         userDB
-      }, 'dev-seed', {expiresIn: 60 * 60});
+         username: userDB.username,
+         email: userDB.email
+      }, process.env.SEED, {expiresIn: 60 * 60});
 
       res.json({
-         userDB,
-         token
+         user: {
+            username: userDB.username,
+            email: userDB.email,
+            token
+         }
       })
 
    })
