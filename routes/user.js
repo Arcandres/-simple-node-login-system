@@ -1,9 +1,10 @@
 const express = require('express'),
    User = require('../models/user'),
-   app = express();
+   authentication = require('./../middlewares/authentication'),
+   app = express()
 
 // Get all users
-app.get('/user', (req, res) => {
+app.get('/user', authentication, (req, res) => {
    User
       .find({})
       .exec((err, users) => {
@@ -16,7 +17,7 @@ app.get('/user', (req, res) => {
 });
 
 // Get user by username
-app.get('/user/:username', (req, res) => {
+app.get('/user/:username', authentication, (req, res) => {
    User
       .findOne({username: req.params.username})
       .exec((err, userDB) => {
@@ -31,7 +32,7 @@ app.get('/user/:username', (req, res) => {
 });
 
 // Create New User
-app.post('/user', async (req, res) => {
+app.post('/user', authentication, async (req, res) => {
    const user = new User({
       name: req.body.name,
       username: req.body.username,
@@ -53,7 +54,7 @@ app.post('/user', async (req, res) => {
 });
 
 // Update user
-app.put('/user/:username', (req, res) => {
+app.put('/user/:username', authentication, (req, res) => {
    User.findOneAndUpdate({username: req.params.username}, req.body, {new: true}, (err, userDB) => {
       if (err) {
          return res.json(err)
@@ -66,7 +67,7 @@ app.put('/user/:username', (req, res) => {
 });
 
 // Delete user
-app.delete('/user/:username', (req, res) => {
+app.delete('/user/:username', authentication, (req, res) => {
    User.findOneAndDelete({username: req.params.username}, (err, userDB) => {
       if (err) {
          return res.json(err)
